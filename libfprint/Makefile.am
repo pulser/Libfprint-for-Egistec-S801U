@@ -26,7 +26,7 @@ EXTRA_DIST = \
 	$(AES4000_SRC)		\
 	$(FDU2000_SRC)		\
 	$(VCOM5S_SRC)		\
-	$(ETSS801U_SRC)     \
+	$(ETSS801U_SRC)		\
 	$(VFS101_SRC)		\
 	aeslib.c aeslib.h	\
 	imagemagick.c		\
@@ -126,10 +126,12 @@ if ENABLE_AES4000
 DRIVER_SRC += $(AES4000_SRC)
 endif
 
-DRIVER_SRC += $(ETSS801U_SRC)
-
 if ENABLE_VFS101
 DRIVER_SRC += $(VFS101_SRC)
+endif
+
+if ENABLE_ETSS801U
+DRIVER_SRC += $(ETSS801U_SRC)
 endif
 
 if REQUIRE_IMAGEMAGICK

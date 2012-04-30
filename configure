@@ -635,6 +635,8 @@ LIBUSB_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
+ENABLE_ETSS801U_FALSE
+ENABLE_ETSS801U_TRUE
 ENABLE_VFS101_FALSE
 ENABLE_VFS101_TRUE
 REQUIRE_AESLIB_FALSE
@@ -697,6 +699,7 @@ LIBTOOL
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
+am__nodep
 AMDEPBACKSLASH
 AMDEP_FALSE
 AMDEP_TRUE
@@ -712,6 +715,8 @@ CFLAGS
 CC
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
+AM_DEFAULT_V
+AM_V
 am__untar
 am__tar
 AMTAR
@@ -2797,11 +2802,11 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 
 # We need awk for the "check" target.  The system "awk" is bad on
 # some platforms.
-# Always define AMTAR for backward compatibility.
+# Always define AMTAR for backward compatibility.  Yes, it's still used
+# in the wild :-(  We should find a proper way to deprecate it ...
+AMTAR='$${TAR-tar}'
 
-AMTAR=${AMTAR-"${am_missing_run}tar"}
-
-am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
+am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
@@ -2823,6 +2828,33 @@ yes) AM_DEFAULT_VERBOSITY=0;;
 no)  AM_DEFAULT_VERBOSITY=1;;
 *)   AM_DEFAULT_VERBOSITY=0;;
 esac
+am_make=${MAKE-make}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $am_make supports nested variables" >&5
+$as_echo_n "checking whether $am_make supports nested variables... " >&6; }
+if ${am_cv_make_support_nested_variables+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if $as_echo 'TRUE=$(BAR$(V))
+BAR0=false
+BAR1=true
+V=1
+am__doit:
+	@$(TRUE)
+.PHONY: am__doit' | $am_make -f - >/dev/null 2>&1; then
+  am_cv_make_support_nested_variables=yes
+else
+  am_cv_make_support_nested_variables=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_make_support_nested_variables" >&5
+$as_echo "$am_cv_make_support_nested_variables" >&6; }
+if test $am_cv_make_support_nested_variables = yes; then
+    AM_V='$(V)'
+  AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
+else
+  AM_V=$AM_DEFAULT_VERBOSITY
+  AM_DEFAULT_V=$AM_DEFAULT_VERBOSITY
+fi
 AM_BACKSLASH='\'
 
 
@@ -3668,6 +3700,7 @@ fi
 if test "x$enable_dependency_tracking" != xno; then
   am_depcomp="$ac_aux_dir/depcomp"
   AMDEPBACKSLASH='\'
+  am__nodep='_no'
 fi
  if test "x$enable_dependency_tracking" != xno; then
   AMDEP_TRUE=
@@ -3692,6 +3725,7 @@ else
   # instance it was reported that on HP-UX the gcc test will end up
   # making a dummy file named `D' -- because `-MD' means `put the output
   # in D'.
+  rm -rf conftest.dir
   mkdir conftest.dir
   # Copy depcomp to subdir because otherwise we won't find it if we're
   # using a relative directory.
@@ -3751,7 +3785,7 @@ else
 	break
       fi
       ;;
-    msvisualcpp | msvcmsys)
+    msvc7 | msvc7msys | msvisualcpp | msvcmsys)
       # This compiler won't grok `-c -o', but also, the minuso test has
       # not run yet.  These depmodes are late enough in the game, and
       # so weak that their functioning should not be impacted.
@@ -11131,6 +11165,7 @@ else
   # instance it was reported that on HP-UX the gcc test will end up
   # making a dummy file named `D' -- because `-MD' means `put the output
   # in D'.
+  rm -rf conftest.dir
   mkdir conftest.dir
   # Copy depcomp to subdir because otherwise we won't find it if we're
   # using a relative directory.
@@ -11190,7 +11225,7 @@ else
 	break
       fi
       ;;
-    msvisualcpp | msvcmsys)
+    msvc7 | msvc7msys | msvisualcpp | msvcmsys)
       # This compiler won't grok `-c -o', but also, the minuso test has
       # not run yet.  These depmodes are late enough in the game, and
       # so weak that their functioning should not be impacted.
@@ -14281,7 +14316,7 @@ lt_age="0"
 
 
 
-all_drivers="upeke2 upekts upektc upeksonly vcom5s uru4000 fdu2000 aes1610 aes2501 aes4000 vfs101"
+all_drivers="upeke2 upekts upektc upeksonly vcom5s uru4000 fdu2000 aes1610 aes2501 aes4000 vfs101 etss801u"
 
 require_imaging='no'
 require_aeslib='no'
@@ -14296,6 +14331,7 @@ enable_aes1610='no'
 enable_aes2501='no'
 enable_aes4000='no'
 enable_vfs101='no'
+enable_etss801u='no'
 
 
 # Check whether --with-drivers was given.
@@ -14379,6 +14415,15 @@ $as_echo "#define ENABLE_AES4000 /**/" >>confdefs.h
 $as_echo "#define ENABLE_VFS101 /**/" >>confdefs.h
 
 			enable_vfs101="yes"
+		;;
+
+		etss801u)
+
+$as_echo "#define ENABLE_ETSS801U /**/" >>confdefs.h
+
+			require_aeslib="yes"
+			require_imaging="yes"
+			enable_etss801u="yes"
 		;;
 	esac
 done
@@ -14471,6 +14516,15 @@ else
   ENABLE_VFS101_TRUE='#'
   ENABLE_VFS101_FALSE=
 fi
+
+ if test "$enable_etss801u" = "yes"; then
+  ENABLE_ETSS801U_TRUE=
+  ENABLE_ETSS801U_FALSE='#'
+else
+  ENABLE_ETSS801U_TRUE='#'
+  ENABLE_ETSS801U_FALSE=
+fi
+
 
 
 
@@ -14608,6 +14662,7 @@ if test -n "$LIBUSB_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_LIBUSB_CFLAGS=`$PKG_CONFIG --cflags "libusb-1.0 >= 0.9.1" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14624,6 +14679,7 @@ if test -n "$LIBUSB_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_LIBUSB_LIBS=`$PKG_CONFIG --libs "libusb-1.0 >= 0.9.1" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14643,9 +14699,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        LIBUSB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libusb-1.0 >= 0.9.1" 2>&1`
+	        LIBUSB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libusb-1.0 >= 0.9.1" 2>&1`
         else
-	        LIBUSB_PKG_ERRORS=`$PKG_CONFIG --print-errors "libusb-1.0 >= 0.9.1" 2>&1`
+	        LIBUSB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libusb-1.0 >= 0.9.1" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$LIBUSB_PKG_ERRORS" >&5
@@ -14660,7 +14716,6 @@ installed software in a non-standard prefix.
 Alternatively, you may set the environment variables LIBUSB_CFLAGS
 and LIBUSB_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
-
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -14676,7 +14731,6 @@ See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
-
 else
 	LIBUSB_CFLAGS=$pkg_cv_LIBUSB_CFLAGS
 	LIBUSB_LIBS=$pkg_cv_LIBUSB_LIBS
@@ -14703,6 +14757,7 @@ if test -n "$CRYPTO_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_CRYPTO_CFLAGS=`$PKG_CONFIG --cflags "nss" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14719,6 +14774,7 @@ if test -n "$CRYPTO_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_CRYPTO_LIBS=`$PKG_CONFIG --libs "nss" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14738,9 +14794,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        CRYPTO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "nss" 2>&1`
+	        CRYPTO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "nss" 2>&1`
         else
-	        CRYPTO_PKG_ERRORS=`$PKG_CONFIG --print-errors "nss" 2>&1`
+	        CRYPTO_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "nss" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$CRYPTO_PKG_ERRORS" >&5
@@ -14755,7 +14811,6 @@ installed software in a non-standard prefix.
 Alternatively, you may set the environment variables CRYPTO_CFLAGS
 and CRYPTO_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
-
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -14771,7 +14826,6 @@ See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
-
 else
 	CRYPTO_CFLAGS=$pkg_cv_CRYPTO_CFLAGS
 	CRYPTO_LIBS=$pkg_cv_CRYPTO_LIBS
@@ -14797,6 +14851,7 @@ if test -n "$GLIB_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_GLIB_CFLAGS=`$PKG_CONFIG --cflags ""glib-2.0"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14813,6 +14868,7 @@ if test -n "$GLIB_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_GLIB_LIBS=`$PKG_CONFIG --libs ""glib-2.0"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14832,9 +14888,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        GLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors ""glib-2.0"" 2>&1`
+	        GLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs ""glib-2.0"" 2>&1`
         else
-	        GLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors ""glib-2.0"" 2>&1`
+	        GLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs ""glib-2.0"" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$GLIB_PKG_ERRORS" >&5
@@ -14849,7 +14905,6 @@ installed software in a non-standard prefix.
 Alternatively, you may set the environment variables GLIB_CFLAGS
 and GLIB_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
-
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -14865,7 +14920,6 @@ See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
-
 else
 	GLIB_CFLAGS=$pkg_cv_GLIB_CFLAGS
 	GLIB_LIBS=$pkg_cv_GLIB_LIBS
@@ -14895,6 +14949,7 @@ if test -n "$IMAGING_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_IMAGING_CFLAGS=`$PKG_CONFIG --cflags "gthread-2.0 gdk-pixbuf-2.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14911,6 +14966,7 @@ if test -n "$IMAGING_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_IMAGING_LIBS=`$PKG_CONFIG --libs "gthread-2.0 gdk-pixbuf-2.0" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14930,9 +14986,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "gthread-2.0 gdk-pixbuf-2.0" 2>&1`
+	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gthread-2.0 gdk-pixbuf-2.0" 2>&1`
         else
-	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --print-errors "gthread-2.0 gdk-pixbuf-2.0" 2>&1`
+	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gthread-2.0 gdk-pixbuf-2.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$IMAGING_PKG_ERRORS" >&5
@@ -14965,6 +15021,7 @@ if test -n "$IMAGING_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_IMAGING_CFLAGS=`$PKG_CONFIG --cflags "ImageMagick" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -14981,6 +15038,7 @@ if test -n "$IMAGING_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_IMAGING_LIBS=`$PKG_CONFIG --libs "ImageMagick" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -15000,9 +15058,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "ImageMagick" 2>&1`
+	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "ImageMagick" 2>&1`
         else
-	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --print-errors "ImageMagick" 2>&1`
+	        IMAGING_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "ImageMagick" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$IMAGING_PKG_ERRORS" >&5
@@ -15452,6 +15510,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_VFS101_TRUE}" && test -z "${ENABLE_VFS101_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_VFS101\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_ETSS801U_TRUE}" && test -z "${ENABLE_ETSS801U_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_ETSS801U\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${REQUIRE_GDKPIXBUF_TRUE}" && test -z "${REQUIRE_GDKPIXBUF_FALSE}"; then

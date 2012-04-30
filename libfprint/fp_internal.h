@@ -265,9 +265,11 @@ extern struct fp_img_driver fdu2000_driver;
 #ifdef ENABLE_VCOM5S
 extern struct fp_img_driver vcom5s_driver;
 #endif
-extern struct fp_img_driver etss801u_driver;
 #ifdef ENABLE_VFS101
 extern struct fp_img_driver vfs101_driver;
+#endif
+#ifdef ENABLE_ETSS801U
+extern struct fp_img_driver etss801u_driver;
 #endif
 
 extern libusb_context *fpi_usb_ctx;

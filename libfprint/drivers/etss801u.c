@@ -31,8 +31,8 @@
 
 #include "etss801u.h"
 
-#define EP_IN          (2 | LIBUSB_ENDPOINT_IN)
-#define EP_OUT         (1 | LIBUSB_ENDPOINT_OUT)
+#define EP_IN			(2 | LIBUSB_ENDPOINT_IN)
+#define EP_OUT			(1 | LIBUSB_ENDPOINT_OUT)
 
 #define BULK_TIMEOUT 4000
 
@@ -57,7 +57,7 @@ char* et_img_buf[]={NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
 
 struct etss801u_dev {
-   gboolean deactivating;
+	gboolean deactivating;
 };
 
 /*Poll functions (when we awaiting for finger)*/
@@ -208,19 +208,19 @@ int et_write_poll(struct fp_img_dev* dev,struct poll_data* adata)
 
 static void start_finger_detection(struct fp_img_dev *dev,struct poll_data* adata)
 {
-   struct etss801u_dev *etdev = dev->priv;
-   int r;
+	struct etss801u_dev *etdev = dev->priv;
+	int r;
 
-   if (etdev->deactivating) {
-       complete_deactivation(dev);
-       return;
-   }
+	if (etdev->deactivating) {
+		complete_deactivation(dev);
+		return;
+	}
 
-   r=et_write_poll(dev,adata);
-   if(r)
-   {
-    fpi_imgdev_session_error(dev,r);
-   }
+	r=et_write_poll(dev,adata);
+	if(r)
+	{
+	 fpi_imgdev_session_error(dev,r);
+	}
 }
 
 /*Enroll functions (When we capturing an image)*/
@@ -689,7 +689,7 @@ int et_read_enroll_data(struct fp_img_dev* dev,struct et_init* dinit,void* user_
  {
   complete_deactivation(dev);
   return 0;
- }     
+ }		
  adata.init=dinit;
  adata.ssm=user_data;
  struct libusb_transfer* transfer=libusb_alloc_transfer(0);
@@ -726,113 +726,113 @@ int et_read_enroll_data(struct fp_img_dev* dev,struct et_init* dinit,void* user_
 
 static void capture_run_state(struct fpi_ssm *ssm)
 {
-   struct fp_img_dev *dev = ssm->priv;
-   int r;
+	struct fp_img_dev *dev = ssm->priv;
+	int r;
 
-   switch(ssm->cur_state)
-   {
-    case 0:
-    //fp_dbg("Initializing before get image data");
-    memset(&einit,0,sizeof(struct et_init));
-    einit.stage=1;
-    case 2:
-    case 4:
-    case 6:
-    case 8:
-    case 10:
-    case 12:
-    case 14:
-    case 16:
-    case 18:
-    case 20:
-    case 22:
-    case 24:
-    case 26:
-    case 28:
-    case 30:
-    case 32:
-    //fp_dbg("Get image from scanner");
-    case 34:
-    case 36:
-    case 38:
-    case 40:
-    case 42:
-    case 44:
-    case 46:
-    goto _castate;
-    case 48:
-    fp_dbg("Image captured, send stop and reinit");
-    case 50:
-    case 52:
-    case 54:
-    case 56:
-    case 58:
-    case 60:
-    case 62:
-    case 64:
-    case 66:
-    case 68:
-    case 70:
-    case 72:
-    case 74:
-    case 76:
-    case 78:
-    case 80:
-_castate:   
-    einit.ssm_state=ssm->cur_state;
-    r=et_write_enroll_data(dev,&einit,ssm);
-    if(r)
-    {
+	switch(ssm->cur_state)
+	{
+	 case 0:
+	 //fp_dbg("Initializing before get image data");
+	 memset(&einit,0,sizeof(struct et_init));
+	 einit.stage=1;
+	 case 2:
+	 case 4:
+	 case 6:
+	 case 8:
+	 case 10:
+	 case 12:
+	 case 14:
+	 case 16:
+	 case 18:
+	 case 20:
+	 case 22:
+	 case 24:
+	 case 26:
+	 case 28:
+	 case 30:
+	 case 32:
+	 //fp_dbg("Get image from scanner");
+	 case 34:
+	 case 36:
+	 case 38:
+	 case 40:
+	 case 42:
+	 case 44:
+	 case 46:
+	 goto _castate;
+	 case 48:
+	 fp_dbg("Image captured, send stop and reinit");
+	 case 50:
+	 case 52:
+	 case 54:
+	 case 56:
+	 case 58:
+	 case 60:
+	 case 62:
+	 case 64:
+	 case 66:
+	 case 68:
+	 case 70:
+	 case 72:
+	 case 74:
+	 case 76:
+	 case 78:
+	 case 80:
+_castate:	 
+	 einit.ssm_state=ssm->cur_state;
+	 r=et_write_enroll_data(dev,&einit,ssm);
+	 if(r)
+	 {
 _cabort:
-     fpi_ssm_mark_aborted(ssm,r);   
-    }
-    break;
-    
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 9:
-    case 11:
-    case 13:
-    case 15:
-    case 17:
-    case 19:
-    case 21:
-    case 23:
-    case 25:
-    case 27:
-    case 29:
-    case 31:
-    case 33:
-    case 35:
-    case 37:
-    case 39:
-    case 41:
-    case 43:
-    case 45:
-    case 47:
-    case 49:
-    case 51:
-    case 53:
-    case 55:
-    case 57:
-    case 59:
-    case 61:
-    case 63:
-    case 65:
-    case 67:
-    case 69:
-    case 71:
-    case 73:
-    case 75:
-    case 77:
-    case 79:
-    case 81:
-    r=et_read_enroll_data(dev,&einit,ssm);
-    if(r) goto _cabort;
-    break;
-   }
+	  fpi_ssm_mark_aborted(ssm,r);	 
+	 }
+	 break;
+	 
+	 case 1:
+	 case 3:
+	 case 5:
+	 case 7:
+	 case 9:
+	 case 11:
+	 case 13:
+	 case 15:
+	 case 17:
+	 case 19:
+	 case 21:
+	 case 23:
+	 case 25:
+	 case 27:
+	 case 29:
+	 case 31:
+	 case 33:
+	 case 35:
+	 case 37:
+	 case 39:
+	 case 41:
+	 case 43:
+	 case 45:
+	 case 47:
+	 case 49:
+	 case 51:
+	 case 53:
+	 case 55:
+	 case 57:
+	 case 59:
+	 case 61:
+	 case 63:
+	 case 65:
+	 case 67:
+	 case 69:
+	 case 71:
+	 case 73:
+	 case 75:
+	 case 77:
+	 case 79:
+	 case 81:
+	 r=et_read_enroll_data(dev,&einit,ssm);
+	 if(r) goto _cabort;
+	 break;
+	}
 }
 
 
@@ -901,40 +901,40 @@ void et_assemble_image(struct fpi_img_dev* dev)
 
 static void capture_sm_complete(struct fpi_ssm *ssm)
 {
-   static struct poll_data adata;
-   struct fp_img_dev *dev = ssm->priv;
-   struct etss801u_dev *etdev = dev->priv;
+	static struct poll_data adata;
+	struct fp_img_dev *dev = ssm->priv;
+	struct etss801u_dev *etdev = dev->priv;
 
-   fp_dbg("");
-   if (etdev->deactivating)
-       complete_deactivation(dev);
-   else if (ssm->error)
-       fpi_imgdev_session_error(dev, ssm->error);
-   else
-       /*Done finger enrolling, assemble image and give it to library*/
-       et_assemble_image(dev);
-       fpi_imgdev_report_finger_status(dev, FALSE);
-       memset(&einit,0,sizeof(struct et_init));
-       adata.dev=(struct fpi_img_dev*)dev;
-       adata.init=&einit;
-       start_finger_detection(dev,&adata);
-   fpi_ssm_free(ssm);
+	fp_dbg("");
+	if (etdev->deactivating)
+		complete_deactivation(dev);
+	else if (ssm->error)
+		fpi_imgdev_session_error(dev, ssm->error);
+	else
+		/*Done finger enrolling, assemble image and give it to library*/
+		et_assemble_image(dev);
+		fpi_imgdev_report_finger_status(dev, FALSE);
+		memset(&einit,0,sizeof(struct et_init));
+		adata.dev=(struct fpi_img_dev*)dev;
+		adata.init=&einit;
+		start_finger_detection(dev,&adata);
+	fpi_ssm_free(ssm);
 }
 
 static void start_capture(struct fp_img_dev *dev)
 {
-   struct etss801u_dev *etdev = dev->priv;
-   struct fpi_ssm *ssm;
+	struct etss801u_dev *etdev = dev->priv;
+	struct fpi_ssm *ssm;
 
-   if (etdev->deactivating) {
-       complete_deactivation(dev);
-       return;
-   }
+	if (etdev->deactivating) {
+		complete_deactivation(dev);
+		return;
+	}
 
-   ssm = fpi_ssm_new(dev->dev, capture_run_state, ET_CAPTURE_STATES);
-   fp_dbg("");
-   ssm->priv = dev;
-   fpi_ssm_start(ssm, capture_sm_complete);
+	ssm = fpi_ssm_new(dev->dev, capture_run_state, ET_CAPTURE_STATES);
+	fp_dbg("");
+	ssm->priv = dev;
+	fpi_ssm_start(ssm, capture_sm_complete);
 }
 
 
@@ -1555,252 +1555,252 @@ _evr:
 
 static void activate_run_state(struct fpi_ssm *ssm)
 {
-   int r;
-   struct fp_img_dev *dev = ssm->priv;
+	int r;
+	struct fp_img_dev *dev = ssm->priv;
 
-   /* Activation process of SS801U is not understandable at
-   the moment. Simply repeats captured protocol.
-   And, I don't know how to enter in initial state without device reset
-    */
-   switch (ssm->cur_state)
-   {
-    case 0:
-    //Reset device
-    libusb_release_interface(dev->udev,0);
-    r=libusb_reset_device(dev->udev);
-    if(r<0)
-    {
+	/* Activation process of SS801U is not understandable at
+	the moment. Simply repeats captured protocol.
+	And, I don't know how to enter in initial state without device reset
+	 */
+	switch (ssm->cur_state)
+	{
+	 case 0:
+	 //Reset device
+	 libusb_release_interface(dev->udev,0);
+	 r=libusb_reset_device(dev->udev);
+	 if(r<0)
+	 {
 _eop:
-     fpi_ssm_mark_aborted(ssm,r);
-     return;
-    }
-    r=libusb_claim_interface(dev->udev,0);
-    if(r) goto _eop;
-    memset(&einit,0,sizeof(struct et_init));
-    einit.stage=1;
-    case 2:
-    case 4:
-    case 6:
-    case 8:
-    case 10:
-    case 12:
-    case 14:
-    case 16:
-    case 18:
-    case 20:
-    case 22:
-    case 24:
-    case 26:
-    case 28:
-    case 30:
-    case 32:
-    case 34:
-    case 36:
-    case 38:
-    case 40:
-    case 42:
-    case 44:
-    case 46:
-    case 48:
-    case 50:
-    case 52:
-    case 54:
-    case 56:
-    case 58:
-    case 60:
-    case 62:
-    case 64:
-    case 66:
-    case 68:
-    case 70:
-    case 72:
-    case 74:
-    case 76:
-    case 78:
-    case 80:
-    case 82:
-    case 84:
-    case 86:
-    case 88:
-    case 90:
-    case 92:
-    case 94:
-    case 96:
-    case 98:
-    case 100:
-    case 102:
-    case 104:
-    case 106:
-    case 108:
-    case 110:
-    case 112:
-    case 114:
-    case 116:
-    einit.ssm_state=ssm->cur_state;
-    r=et_write_init(dev,&einit,ssm);
-    if(r)
-    {
+	  fpi_ssm_mark_aborted(ssm,r);
+	  return;
+	 }
+	 r=libusb_claim_interface(dev->udev,0);
+	 if(r) goto _eop;
+	 memset(&einit,0,sizeof(struct et_init));
+	 einit.stage=1;
+	 case 2:
+	 case 4:
+	 case 6:
+	 case 8:
+	 case 10:
+	 case 12:
+	 case 14:
+	 case 16:
+	 case 18:
+	 case 20:
+	 case 22:
+	 case 24:
+	 case 26:
+	 case 28:
+	 case 30:
+	 case 32:
+	 case 34:
+	 case 36:
+	 case 38:
+	 case 40:
+	 case 42:
+	 case 44:
+	 case 46:
+	 case 48:
+	 case 50:
+	 case 52:
+	 case 54:
+	 case 56:
+	 case 58:
+	 case 60:
+	 case 62:
+	 case 64:
+	 case 66:
+	 case 68:
+	 case 70:
+	 case 72:
+	 case 74:
+	 case 76:
+	 case 78:
+	 case 80:
+	 case 82:
+	 case 84:
+	 case 86:
+	 case 88:
+	 case 90:
+	 case 92:
+	 case 94:
+	 case 96:
+	 case 98:
+	 case 100:
+	 case 102:
+	 case 104:
+	 case 106:
+	 case 108:
+	 case 110:
+	 case 112:
+	 case 114:
+	 case 116:
+	 einit.ssm_state=ssm->cur_state;
+	 r=et_write_init(dev,&einit,ssm);
+	 if(r)
+	 {
 _mabort:
-     fpi_ssm_mark_aborted(ssm,r);
-    }
-    break;
-    
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 9:
-    case 11:
-    case 13:
-    case 15:
-    case 17:
-    case 19:
-    case 21:
-    case 23:
-    case 25:
-    case 27:
-    case 29:
-    case 31:
-    case 33:
-    case 35:
-    case 37:
-    case 39:
-    case 41:
-    case 43:
-    case 45:
-    case 47:
-    case 49:
-    case 51:
-    case 53:
-    case 55:
-    case 57:
-    case 59:
-    case 61:
-    case 63:
-    case 65:
-    case 67:
-    case 69:
-    case 71:
-    case 73:
-    case 75:
-    case 77:
-    case 79:
-    case 81:
-    case 83:
-    case 85:
-    case 87:
-    case 89:
-    case 91:
-    case 93:
-    case 95:
-    case 97:
-    case 99:
-    case 101:
-    case 103:
-    case 105:
-    case 107:
-    case 109:
-    case 111:
-    case 113:
-    case 115:
-    case 117:
-    einit.ssm_state=ssm->cur_state;
-    r=et_read_answer(dev,&einit,ssm);
-    if(r) goto _mabort;
-    break;
-   
+	  fpi_ssm_mark_aborted(ssm,r);
+	 }
+	 break;
+	 
+	 case 1:
+	 case 3:
+	 case 5:
+	 case 7:
+	 case 9:
+	 case 11:
+	 case 13:
+	 case 15:
+	 case 17:
+	 case 19:
+	 case 21:
+	 case 23:
+	 case 25:
+	 case 27:
+	 case 29:
+	 case 31:
+	 case 33:
+	 case 35:
+	 case 37:
+	 case 39:
+	 case 41:
+	 case 43:
+	 case 45:
+	 case 47:
+	 case 49:
+	 case 51:
+	 case 53:
+	 case 55:
+	 case 57:
+	 case 59:
+	 case 61:
+	 case 63:
+	 case 65:
+	 case 67:
+	 case 69:
+	 case 71:
+	 case 73:
+	 case 75:
+	 case 77:
+	 case 79:
+	 case 81:
+	 case 83:
+	 case 85:
+	 case 87:
+	 case 89:
+	 case 91:
+	 case 93:
+	 case 95:
+	 case 97:
+	 case 99:
+	 case 101:
+	 case 103:
+	 case 105:
+	 case 107:
+	 case 109:
+	 case 111:
+	 case 113:
+	 case 115:
+	 case 117:
+	 einit.ssm_state=ssm->cur_state;
+	 r=et_read_answer(dev,&einit,ssm);
+	 if(r) goto _mabort;
+	 break;
+	
         }
 }
 
 /* jump to finger detection */
 static void activate_sm_complete(struct fpi_ssm *ssm)
 {
-   static struct poll_data adata;
-   
-   struct fp_img_dev *dev = ssm->priv;
-   fp_dbg("status %d", ssm->error);
-   fpi_imgdev_activate_complete(dev, ssm->error);
+	static struct poll_data adata;
+	
+	struct fp_img_dev *dev = ssm->priv;
+	fp_dbg("status %d", ssm->error);
+	fpi_imgdev_activate_complete(dev, ssm->error);
 
-   if (!ssm->error)
-       memset(&einit,0,sizeof(struct et_init));
-       adata.dev=(struct fpi_img_dev*)dev;
-       adata.init=&einit;
-       start_finger_detection(dev,&adata);
-   fpi_ssm_free(ssm);
+	if (!ssm->error)
+		memset(&einit,0,sizeof(struct et_init));
+		adata.dev=(struct fpi_img_dev*)dev;
+		adata.init=&einit;
+		start_finger_detection(dev,&adata);
+	fpi_ssm_free(ssm);
 }
 
 static int dev_activate(struct fp_img_dev *dev, enum fp_imgdev_state state)
 {
-   struct fpi_ssm *ssm = fpi_ssm_new(dev->dev, activate_run_state,ET_ACTIVATE_STATES);
-   ssm->priv = dev;
-   fpi_ssm_start(ssm, activate_sm_complete);
-   return 0;
+	struct fpi_ssm *ssm = fpi_ssm_new(dev->dev, activate_run_state,ET_ACTIVATE_STATES);
+	ssm->priv = dev;
+	fpi_ssm_start(ssm, activate_sm_complete);
+	return 0;
 }
 
 static void dev_deactivate(struct fp_img_dev *dev)
 {
-   struct etss801u_dev *etdev = dev->priv;
-   etdev->deactivating = TRUE;
+	struct etss801u_dev *etdev = dev->priv;
+	etdev->deactivating = TRUE;
 }
 
 static void complete_deactivation(struct fp_img_dev *dev)
 {
-   struct etss801u_dev *etdev = dev->priv;
-   fp_dbg("");
-   etdev->deactivating = FALSE;
-   fpi_imgdev_deactivate_complete(dev);
+	struct etss801u_dev *etdev = dev->priv;
+	fp_dbg("");
+	etdev->deactivating = FALSE;
+	fpi_imgdev_deactivate_complete(dev);
 }
 
 static int dev_init(struct fp_img_dev *dev, unsigned long driver_data)
 {
-   int r;
+	int r;
 
-   r = libusb_claim_interface(dev->udev, 0);
-   if (r < 0) {
-       fp_err("could not claim interface 0");
-       return r;
-   }
+	r = libusb_claim_interface(dev->udev, 0);
+	if (r < 0) {
+		fp_err("could not claim interface 0");
+		return r;
+	}
 
-   //dev->dev->nr_enroll_stages=3;
+	//dev->dev->nr_enroll_stages=3;
 
-   dev->priv = g_malloc0(sizeof(struct etss801u_dev));
-   fpi_imgdev_open_complete(dev, 0);
-   return 0;
+	dev->priv = g_malloc0(sizeof(struct etss801u_dev));
+	fpi_imgdev_open_complete(dev, 0);
+	return 0;
 }
 
 static void dev_deinit(struct fp_img_dev *dev)
 {
-   g_free(dev->priv);
-   libusb_release_interface(dev->udev, 0);
-   fpi_imgdev_close_complete(dev);
+	g_free(dev->priv);
+	libusb_release_interface(dev->udev, 0);
+	fpi_imgdev_close_complete(dev);
 }
 
 static const struct usb_id id_table[] = {
-   { .vendor = 0x1c7a, .product = 0x0801 }, /* EgisTec SS801U */
-   { 0, 0, 0, },
+	{ .vendor = 0x1c7a, .product = 0x0801 }, /* EgisTec SS801U */
+	{ 0, 0, 0, },
 };
 
 struct fp_img_driver etss801u_driver = {
-   .driver = {
-       .id = 10, //I take first free number, but at final, developer's decision needed.
-       .name = FP_COMPONENT,
-       .full_name = "EgisTec SS801U",
-       .id_table = id_table,
-       .scan_type = FP_SCAN_TYPE_SWIPE,
-   },
-   .flags = 0,
-   //.img_height = 640,
-   .img_height = 160,
-   .img_width = 192,
-   //.img_width = 768, //Still in doubt, maybe 192
+	.driver = {
+		.id = 10, //I take first free number, but at final, developer's decision needed.
+		.name = FP_COMPONENT,
+		.full_name = "EgisTec SS801U",
+		.id_table = id_table,
+		.scan_type = FP_SCAN_TYPE_SWIPE,
+	},
+	.flags = 0,
+	//.img_height = 640,
+	.img_height = 160,
+	.img_width = 192,
+	//.img_width = 768, //Still in doubt, maybe 192
         //.img_width = 192,
         //.img_width = 384,
 
         .bz3_threshold = 19,
-   
-   .open = dev_init,
-   .close = dev_deinit,
-   .activate = dev_activate,
-   .deactivate = dev_deactivate,
+	
+	.open = dev_init,
+	.close = dev_deinit,
+	.activate = dev_activate,
+	.deactivate = dev_deactivate,
 };
 

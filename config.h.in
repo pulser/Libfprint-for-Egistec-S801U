@@ -15,6 +15,9 @@
 /* Debug message logging */
 #undef ENABLE_DEBUG_LOGGING
 
+/* Build Egistec driver */
+#undef ENABLE_ETSS801U
+
 /* Build Secugen FDU 2000 driver */
 #undef ENABLE_FDU2000
 

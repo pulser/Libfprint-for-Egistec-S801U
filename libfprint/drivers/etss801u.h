@@ -21,17 +21,17 @@
 
 /*
 Structure of SS801U command: (As I see it, maybe wrong)
-1.  Header         4 bytes (see above)
+1.  Header 		4 bytes (see above)
 2.  Permanent data      4 bytes (see above)
-3.  Flag1      2 bytes (Need to initialize)
-4.  Empty data     4 bytes
-5.  Command        2 bytes (Need to initialize)
-6.  Flag2      2 bytes (Need to initialize)
-7.  Flag3      2 bytes (Need to initialize)
-8.  Flag4      2 bytes (Need to initialize)
-9.  Flag5      2 bytes (Need to initialize)
-10. Flag6      2 bytes (Need to initialize)
-11. Empty data     5 bytes
+3.  Flag1		2 bytes (Need to initialize)
+4.  Empty data		4 bytes
+5.  Command		2 bytes (Need to initialize)
+6.  Flag2		2 bytes (Need to initialize)
+7.  Flag3		2 bytes (Need to initialize)
+8.  Flag4		2 bytes (Need to initialize)
+9.  Flag5		2 bytes (Need to initialize)
+10. Flag6		2 bytes (Need to initialize)
+11. Empty data		5 bytes
 TOTAL: 31 bytes
 */
 

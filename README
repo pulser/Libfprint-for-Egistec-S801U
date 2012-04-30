@@ -1,3 +1,21 @@
+Pulser Edit:
+
+Applied the patch by Alexey Prokopchuk <alexpro@homelan.lg.ua> to add an Egistec SS801U driver, modified makefiles so it's a case of
+
+./configure
+make
+sudo make install
+
+to get this going. 
+
+If you want to access the device as a non-root user, add the following to a new /etc/udev/rules.d file (50Fingerprint.rules for me)
+
+SUBSYSTEM=="usb", ATTR{idVendor}=="1c7a", MODE="0666", GROUP="plugdev"
+
+and ensure your user is a member of the plugdev group (in this case).
+
+
+
 libfprint
 =========
 
